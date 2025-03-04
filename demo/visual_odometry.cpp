@@ -9,7 +9,7 @@
 #include "dataset.h"
 #include "map_builder.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ros::init(argc, argv, "air_slam");
 
   std::string config_path, model_dir;
@@ -32,12 +32,12 @@ int main(int argc, char **argv) {
 
   double sum_time = 0;
   int image_num = 0;
-  for(size_t i = 0; i < dataset_length && ros::ok(); ++i){
+  for (size_t i = 0; i < dataset_length && ros::ok(); ++i) {
     std::cout << "i ====== " << i << std::endl;
     cv::Mat image_left, image_right;
     double timestamp;
     ImuDataList batch_imu_data;
-    if(!dataset.GetData(i, image_left, image_right, batch_imu_data, timestamp)) continue;
+    if (!dataset.GetData(i, image_left, image_right, batch_imu_data, timestamp)) continue;
 
     InputDataPtr data = std::shared_ptr<InputData>(new InputData());
     data->index = i;
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     data->image_right = image_right;
     data->batch_imu_data = batch_imu_data;
 
-    auto before_infer = std::chrono::high_resolution_clock::now();   
+    auto before_infer = std::chrono::high_resolution_clock::now();
     map_builder.AddInput(data);
     auto after_infer = std::chrono::high_resolution_clock::now();
     auto cost_time = std::chrono::duration_cast<std::chrono::milliseconds>(after_infer - before_infer).count();
@@ -56,13 +56,12 @@ int main(int argc, char **argv) {
   }
   std::cout << "Average FPS = " << image_num / (sum_time / 1000.0) << std::endl;
 
-
-  std::cout << "Waiting to stop..." << std::endl; 
+  std::cout << "Waiting to stop..." << std::endl;
   map_builder.Stop();
-  while(!map_builder.IsStopped()){
+  while (!map_builder.IsStopped()) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
-  std::cout << "Map building has been stopped" << std::endl; 
+  std::cout << "Map building has been stopped" << std::endl;
 
   std::string trajectory_path = ConcatenateFolderAndFileName(configs.saving_dir, "trajectory_v0.txt");
   map_builder.SaveTrajectory(trajectory_path);

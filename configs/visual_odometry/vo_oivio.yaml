@@ -2,9 +2,12 @@ plnet:
   use_superpoint: 1
   max_keypoints: 450
   keypoint_threshold: 0.004
-  remove_borders: 4 
+  remove_borders: 4
   line_threshold: 0.8
   line_length_threshold: 50
+
+yolo:
+  model_name: yolo-seg
 
 point_matcher:
   matcher: 0   # 0 for lightglue, 1 for superglue

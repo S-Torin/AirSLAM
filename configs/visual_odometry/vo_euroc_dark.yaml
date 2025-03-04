@@ -2,9 +2,12 @@ plnet:
   use_superpoint: 1
   max_keypoints: 350
   keypoint_threshold: 0.0035
-  remove_borders: 4 
+  remove_borders: 4
   line_threshold: 0.7
   line_length_threshold: 50
+
+yolo:
+  model_name: yolo-seg
 
 point_matcher:
   matcher: 0   # 0 for lightglue, 1 for superglue
@@ -18,7 +21,7 @@ keyframe:
   lost_num_match: 10
   min_num_match: 30
   max_num_match: 80
-  tracking_point_rate: 0.65  
+  tracking_point_rate: 0.65
   tracking_parallax_rate: 0.1
 
 optimization:
@@ -50,5 +53,3 @@ ros_publisher:
   mapline_topic: "/AirSLAM/mapline"
   reloc: 0
   reloc_topic: "/AirSLAM/reloc"
-
- 

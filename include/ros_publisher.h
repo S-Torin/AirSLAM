@@ -26,7 +26,7 @@ enum FeatureMessgaeType {
   RelocFeature = 1
 };
 
-struct FeatureMessgae{
+struct FeatureMessgae {
   double time;
   cv::Mat image;
   cv::Mat key_image;
@@ -44,14 +44,14 @@ struct FeatureMessgae{
 typedef std::shared_ptr<FeatureMessgae> FeatureMessgaePtr;
 typedef std::shared_ptr<const FeatureMessgae> FeatureMessgaeConstPtr;
 
-struct FramePoseMessage{
+struct FramePoseMessage {
   double time;
   Eigen::Matrix4d pose;
 };
 typedef std::shared_ptr<FramePoseMessage> FramePoseMessagePtr;
 typedef std::shared_ptr<const FramePoseMessage> FramePoseMessageConstPtr;
 
-struct KeyframeMessage{
+struct KeyframeMessage {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   double time;
@@ -62,9 +62,9 @@ struct KeyframeMessage{
 typedef std::shared_ptr<KeyframeMessage> KeyframeMessagePtr;
 typedef std::shared_ptr<const KeyframeMessage> KeyframeMessageConstPtr;
 
-struct MapMessage{
+struct MapMessage {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  
+
   double time;
   bool reset;
   std::vector<int> ids;
@@ -73,9 +73,9 @@ struct MapMessage{
 typedef std::shared_ptr<MapMessage> MapMessagePtr;
 typedef std::shared_ptr<const MapMessage> MapMessageConstPtr;
 
-struct MapLineMessage{
+struct MapLineMessage {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  
+
   double time;
   bool reset;
   std::vector<int> ids;
@@ -84,8 +84,7 @@ struct MapLineMessage{
 typedef std::shared_ptr<MapLineMessage> MapLineMessagePtr;
 typedef std::shared_ptr<const MapLineMessage> MapLineMessageConstPtr;
 
-
-struct RelocMessage{
+struct RelocMessage {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   double map_scale;
@@ -96,9 +95,8 @@ struct RelocMessage{
 typedef std::shared_ptr<RelocMessage> RelocMessagePtr;
 typedef std::shared_ptr<const RelocMessage> RelocMessageConstPtr;
 
-
-class RosPublisher{
-public:
+class RosPublisher {
+ public:
   RosPublisher(const RosPublisherConfig& ros_publisher_config, ros::NodeHandle nh);
 
   void PublishFeature(FeatureMessgaePtr feature_message);
@@ -111,7 +109,7 @@ public:
   void Clear();
   void ShutDown();
 
-private:
+ private:
   RosPublisherConfig _config;
 
   // for publishing features
@@ -127,7 +125,7 @@ private:
   ros::Publisher _ros_keyframe_pub;
   ros::Publisher _ros_path_pub;
   std::map<int, int> _keyframe_id_to_index;
-  geometry_msgs::PoseArray  _ros_keyframe_array;
+  geometry_msgs::PoseArray _ros_keyframe_array;
   nav_msgs::Path _ros_path;
   ThreadPublisher<KeyframeMessage> _keyframe_publisher;
 

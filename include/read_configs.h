@@ -6,7 +6,7 @@
 
 #include "utils.h"
 
-struct PLNetConfig{
+struct PLNetConfig {
   std::string superpoint_onnx;
   std::string superpoint_engine;
 
@@ -25,7 +25,7 @@ struct PLNetConfig{
   float line_length_threshold;
 
   PLNetConfig() {}
-  void Load(const YAML::Node& plnet_node){
+  void Load(const YAML::Node& plnet_node) {
     use_superpoint = plnet_node["use_superpoint"].as<int>();
 
     max_keypoints = plnet_node["max_keypoints"].as<int>();
@@ -36,8 +36,8 @@ struct PLNetConfig{
     line_length_threshold = plnet_node["line_length_threshold"].as<float>();
   }
 
-  void SetModelPath(std::string model_dir){
-    if(use_superpoint){
+  void SetModelPath(std::string model_dir) {
+    if (use_superpoint) {
       superpoint_onnx = ConcatenateFolderAndFileName(model_dir, "superpoint_v1_sim_int32.onnx");
       superpoint_engine = ConcatenateFolderAndFileName(model_dir, "superpoint_v1_sim_int32.engine");
     }
@@ -47,29 +47,27 @@ struct PLNetConfig{
     plnet_s1_onnx = ConcatenateFolderAndFileName(model_dir, "plnet_s1.onnx");
     plnet_s1_engine = ConcatenateFolderAndFileName(model_dir, "plnet_s1.engine");
   }
-
 };
-
 
 struct SuperPointConfig {
   SuperPointConfig() {}
-  void Load(const YAML::Node& superpoint_node){
+  void Load(const YAML::Node& superpoint_node) {
     max_keypoints = superpoint_node["max_keypoints"].as<int>();
     keypoint_threshold = superpoint_node["keypoint_threshold"].as<float>();
     remove_borders = superpoint_node["remove_borders"].as<int>();
     dla_core = superpoint_node["dla_core"].as<int>();
     const YAML::Node superpoint_input_tensor_names_node = superpoint_node["input_tensor_names"];
     size_t superpoint_num_input_tensor_names = superpoint_input_tensor_names_node.size();
-    for(size_t i = 0; i < superpoint_num_input_tensor_names; i++){
+    for (size_t i = 0; i < superpoint_num_input_tensor_names; i++) {
       input_tensor_names.push_back(superpoint_input_tensor_names_node[i].as<std::string>());
     }
     YAML::Node superpoint_output_tensor_names_node = superpoint_node["output_tensor_names"];
     size_t superpoint_num_output_tensor_names = superpoint_output_tensor_names_node.size();
-    for(size_t i = 0; i < superpoint_num_output_tensor_names; i++){
+    for (size_t i = 0; i < superpoint_num_output_tensor_names; i++) {
       output_tensor_names.push_back(superpoint_output_tensor_names_node[i].as<std::string>());
     }
     onnx_file = superpoint_node["onnx_file"].as<std::string>();
-    engine_file= superpoint_node["engine_file"].as<std::string>();
+    engine_file = superpoint_node["engine_file"].as<std::string>();
   }
 
   int max_keypoints;
@@ -84,7 +82,7 @@ struct SuperPointConfig {
 
 struct PointMatcherConfig {
   PointMatcherConfig() {}
-  void Load(const YAML::Node& point_matcher_node){
+  void Load(const YAML::Node& point_matcher_node) {
     matcher = point_matcher_node["matcher"].as<int>();
     image_width = point_matcher_node["image_width"].as<int>();
     image_height = point_matcher_node["image_height"].as<int>();
@@ -102,9 +100,9 @@ struct PointMatcherConfig {
   std::string engine_file;
 };
 
-struct LineDetectorConfig{
+struct LineDetectorConfig {
   LineDetectorConfig() {}
-  void Load(const YAML::Node& line_detector_node){
+  void Load(const YAML::Node& line_detector_node) {
     length_threshold = line_detector_node["length_threshold"].as<int>();
     distance_threshold = line_detector_node["distance_threshold"].as<float>();
     canny_th1 = line_detector_node["canny_th1"].as<double>();
@@ -127,9 +125,25 @@ struct LineDetectorConfig{
   float ep_thr;
 };
 
+struct YoloSegmentorConfig {
+  YoloSegmentorConfig() {}
+  void Load(const YAML::Node& yolo_segmentor_node) {
+    model_name = yolo_segmentor_node["model_name"].as<std::string>();
+  }
+
+  void SetModelPath(std::string model_dir) {
+    model_onnx = ConcatenateFolderAndFileName(model_dir, model_name + ".onnx");
+    model_engine = ConcatenateFolderAndFileName(model_dir, model_name + ".engine");
+  }
+
+  std::string model_name;
+  std::string model_onnx;
+  std::string model_engine;
+};
+
 struct KeyframeConfig {
   KeyframeConfig() {}
-  void Load(const YAML::Node& keyframe_node){
+  void Load(const YAML::Node& keyframe_node) {
     min_init_stereo_feature = keyframe_node["min_init_stereo_feature"].as<int>();
     lost_num_match = keyframe_node["lost_num_match"].as<int>();
     min_num_match = keyframe_node["min_num_match"].as<int>();
@@ -146,14 +160,14 @@ struct KeyframeConfig {
   double tracking_parallax_rate;
 };
 
-struct OptimizationConfig{
+struct OptimizationConfig {
   OptimizationConfig() {}
-  void Load(const YAML::Node& optimization_node){
+  void Load(const YAML::Node& optimization_node) {
     mono_point = optimization_node["mono_point"].as<double>();
     stereo_point = optimization_node["stereo_point"].as<double>();
     mono_line = optimization_node["mono_line"].as<double>();
     stereo_line = optimization_node["stereo_line"].as<double>();
-    rate = optimization_node["rate"].as<double>();    
+    rate = optimization_node["rate"].as<double>();
   }
 
   double mono_point;
@@ -163,11 +177,11 @@ struct OptimizationConfig{
   double rate;
 };
 
-struct RosPublisherConfig{
+struct RosPublisherConfig {
   RosPublisherConfig() {}
-  void Load(const YAML::Node& ros_publisher_node){
+  void Load(const YAML::Node& ros_publisher_node) {
     feature = ros_publisher_node["feature"].as<int>();
-    feature_topic = ros_publisher_node["feature_topic"].as<std::string>();   
+    feature_topic = ros_publisher_node["feature_topic"].as<std::string>();
     frame_pose = ros_publisher_node["frame_pose"].as<int>();
     frame_pose_topic = ros_publisher_node["frame_pose_topic"].as<std::string>();
     frame_odometry_topic = ros_publisher_node["frame_odometry_topic"].as<std::string>();
@@ -198,8 +212,7 @@ struct RosPublisherConfig{
   std::string reloc_topic;
 };
 
-
-struct VisualOdometryConfigs{
+struct VisualOdometryConfigs {
   std::string dataroot;
   std::string camera_config_path;
   std::string model_dir;
@@ -209,6 +222,7 @@ struct VisualOdometryConfigs{
   SuperPointConfig superpoint_config;
   PointMatcherConfig point_matcher_config;
   LineDetectorConfig line_detector_config;
+  YoloSegmentorConfig yolo_segmenter_config;
   KeyframeConfig keyframe_config;
   OptimizationConfig tracking_optimization_config;
   OptimizationConfig backend_optimization_config;
@@ -216,11 +230,11 @@ struct VisualOdometryConfigs{
 
   VisualOdometryConfigs() {}
 
-  VisualOdometryConfigs(const std::string& config_file_, const std::string& model_dir_){
+  VisualOdometryConfigs(const std::string& config_file_, const std::string& model_dir_) {
     model_dir = model_dir_;
 
     std::cout << "config_file = " << config_file_ << std::endl;
-    if(!FileExists(config_file_)){
+    if (!FileExists(config_file_)) {
       std::cout << "config file: " << config_file_ << " doesn't exist" << std::endl;
       return;
     }
@@ -228,6 +242,9 @@ struct VisualOdometryConfigs{
 
     plnet_config.Load(file_node["plnet"]);
     plnet_config.SetModelPath(model_dir);
+
+    yolo_segmenter_config.Load(file_node["yolo"]);
+    yolo_segmenter_config.SetModelPath(model_dir);
 
     point_matcher_config.Load(file_node["point_matcher"]);
     point_matcher_config.onnx_file = ConcatenateFolderAndFileName(model_dir, point_matcher_config.onnx_file);
@@ -240,16 +257,16 @@ struct VisualOdometryConfigs{
   }
 };
 
-struct MapRefinementConfigs{
+struct MapRefinementConfigs {
   PointMatcherConfig point_matcher_config;
   OptimizationConfig map_optimization_config;
   RosPublisherConfig ros_publisher_config;
 
   MapRefinementConfigs() {}
 
-  MapRefinementConfigs(const std::string& config_file_, const std::string& model_dir_){
+  MapRefinementConfigs(const std::string& config_file_, const std::string& model_dir_) {
     std::cout << "config_file = " << config_file_ << std::endl;
-    if(!FileExists(config_file_)){
+    if (!FileExists(config_file_)) {
       std::cout << "config file: " << config_file_ << " doesn't exist" << std::endl;
       return;
     }
@@ -263,7 +280,7 @@ struct MapRefinementConfigs{
   }
 };
 
-struct RelocalizationConfigs{
+struct RelocalizationConfigs {
   std::string dataroot;
   std::string camera_config_path;
   std::string model_dir;
@@ -278,11 +295,11 @@ struct RelocalizationConfigs{
 
   RelocalizationConfigs() {}
 
-  RelocalizationConfigs(const std::string& config_file_, const std::string& model_dir_){
+  RelocalizationConfigs(const std::string& config_file_, const std::string& model_dir_) {
     model_dir = model_dir_;
 
     std::cout << "config_file = " << config_file_ << std::endl;
-    if(!FileExists(config_file_)){
+    if (!FileExists(config_file_)) {
       std::cout << "config file: " << config_file_ << " doesn't exist" << std::endl;
       return;
     }
@@ -303,6 +320,5 @@ struct RelocalizationConfigs{
     ros_publisher_config.Load(file_node["ros_publisher"]);
   }
 };
-
 
 #endif  // READ_CONFIGS_H_

@@ -11,97 +11,97 @@
 #include <functional>
 
 template <class T>
-class ThreadPublisher{
-public:
-  ThreadPublisher(){ 
+class ThreadPublisher {
+ public:
+  ThreadPublisher() {
     shutdown_requested = false;
     stopped = false;
   }
 
   ~ThreadPublisher() {}
 
-  void Register(std::function<void(const std::shared_ptr<const T>&)> cb){
+  void Register(std::function<void(const std::shared_ptr<const T>&)> cb) {
     callbacks.push_back(cb);
   }
 
-  void Start(){
+  void Start() {
     publish_thread = std::thread(boost::bind(&ThreadPublisher::Process, this));
   }
 
-  void RequestShutdown(){
+  void RequestShutdown() {
     std::unique_lock<std::mutex> locker(shutdown_mutex);
     shutdown_requested = true;
-    locker.unlock(); 
+    locker.unlock();
   }
 
-  bool ShutdownRequested(){
+  bool ShutdownRequested() {
     bool is_requested;
     std::unique_lock<std::mutex> locker(shutdown_mutex);
     is_requested = shutdown_requested;
-    locker.unlock(); 
+    locker.unlock();
     return is_requested;
   }
 
-  void Publish(const std::shared_ptr<const T> msg){
+  void Publish(const std::shared_ptr<const T> msg) {
     std::unique_lock<std::mutex> locker(msg_mutex);
     msgs.push(msg);
     locker.unlock();
     msg_cond.notify_one();
   }
 
-  void Process(){
-    while(!ShutdownRequested()){
+  void Process() {
+    while (!ShutdownRequested()) {
       std::shared_ptr<const T> msg;
       std::unique_lock<std::mutex> locker(msg_mutex);
-      while(msgs.empty()){
-        if(ShutdownRequested()){
+      while (msgs.empty()) {
+        if (ShutdownRequested()) {
           locker.unlock();
           break;
-        }else{
+        } else {
           msg_cond.wait(locker);
         }
       }
 
-      if(ShutdownRequested()){
+      if (ShutdownRequested()) {
         break;
-      }else{
-        if(0){
+      } else {
+        if (0) {
           msg = msgs.back();
-          while(!msgs.empty()){
+          while (!msgs.empty()) {
             msgs.pop();
           }
-        }else{
+        } else {
           msg = msgs.front();
           msgs.pop();
         }
       }
       locker.unlock();
-      for(auto callback : callbacks){
+      for (auto callback : callbacks) {
         callback(msg);
       }
     }
     stopped = true;
   }
 
-  void ShutDown(){
+  void ShutDown() {
     // shutdown_requested = true;
     // msg_cond.notify_one();
-    while(!stopped){
+    while (!stopped) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       RequestShutdown();
       msg_cond.notify_one();
     }
 
-    if(publish_thread.joinable()){
+    if (publish_thread.joinable()) {
       publish_thread.join();
     }
   }
 
-private:
+ private:
   std::mutex msg_mutex;
   std::mutex shutdown_mutex;
   std::condition_variable msg_cond;
-  std::queue<std::shared_ptr<const T> > msgs;
+  std::queue<std::shared_ptr<const T>> msgs;
 
   std::thread publish_thread;
   std::vector<std::function<void(const std::shared_ptr<const T>&)>> callbacks;

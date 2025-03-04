@@ -24,8 +24,8 @@
 #define FRAME_GRID_ROWS 48
 #define FRAME_GRID_COLS 64
 
-class Frame{
-public:
+class Frame {
+ public:
   Frame();
   Frame(int frame_id, bool pose_fixed, CameraPtr camera, double timestamp);
   // Frame& operator=(const Frame& other);
@@ -40,9 +40,9 @@ public:
 
   // point features
   bool FindGrid(float& x, float& y, int& grid_x, int& grid_y);
-  void AddFeatures(Eigen::Matrix<float, 259, Eigen::Dynamic>& features_left, 
-      Eigen::Matrix<float, 259, Eigen::Dynamic>& features_right, std::vector<Eigen::Vector4d>& lines_left, 
-      std::vector<Eigen::Vector4d>& lines_right, std::vector<cv::DMatch>& stereo_matches);
+  void AddFeatures(Eigen::Matrix<float, 259, Eigen::Dynamic>& features_left,
+                   Eigen::Matrix<float, 259, Eigen::Dynamic>& features_right, std::vector<Eigen::Vector4d>& lines_left,
+                   std::vector<Eigen::Vector4d>& lines_right, std::vector<cv::DMatch>& stereo_matches);
   void AddLeftFeatures(Eigen::Matrix<float, 259, Eigen::Dynamic>& features_left, std::vector<Eigen::Vector4d>& lines_left);
   int AddRightFeatures(Eigen::Matrix<float, 259, Eigen::Dynamic>& features_right, std::vector<Eigen::Vector4d>& lines_right, std::vector<cv::DMatch>& stereo_matches);
 
@@ -56,7 +56,7 @@ public:
   int GetInlierFlag(std::vector<bool>& inliers_feature_message);
 
   double GetRightPosition(size_t idx);
-  std::vector<double>& GetAllRightPosition(); 
+  std::vector<double>& GetAllRightPosition();
 
   bool GetDescriptor(size_t idx, Eigen::Matrix<float, 256, 1>& descriptor) const;
 
@@ -77,7 +77,6 @@ public:
   CameraPtr GetCamera();
   void FindNeighborKeypoints(Eigen::Vector3d& p2D, std::vector<int>& indices, double r, bool filter = true) const;
 
-  
   // line features
   size_t LineNum();
   void SetLineTrackId(size_t idx, int line_track_id);
@@ -122,8 +121,8 @@ public:
 
   // for loop detection and re-localization
   void DetectSentences(std::vector<DBoW2::WordId>& word_of_features);
-  void FindSameSentences(const std::vector<std::vector<DBoW2::WordId>>& other_sentenses, 
-      std::vector<int>& word_num_of_same_sentence);
+  void FindSameSentences(const std::vector<std::vector<DBoW2::WordId>>& other_sentenses,
+                         std::vector<int>& word_num_of_same_sentence);
   int ComputeSentenseSimilarity(const std::vector<DBoW2::WordId>& other_word_of_features);
 
   const std::map<DBoW2::WordId, std::vector<int>>& GetSentenseIdsOfWord();
@@ -132,8 +131,7 @@ public:
   void FindJunctionConnections();
   const std::vector<std::set<int>>& GetJunctionConnections();
 
-  
-public:
+ public:
   int tracking_frame_id;
   int local_map_optimization_frame_id;
   int local_map_optimization_fix_frame_id;
@@ -143,14 +141,14 @@ public:
   std::vector<std::map<int, double>> relation_left;
   std::vector<std::map<int, double>> relation_right;
 
-private:
+ private:
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version){
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
     ar & _frame_id;
     ar & _timestamp;
     ar & _pose_fixed;
-    ar & boost::serialization::make_array(_pose.data(), _pose.size());
+    ar& boost::serialization::make_array(_pose.data(), _pose.size());
 
     SerializeFeatures(ar, _features, version);
     SerializeKeypoints(ar, _keypoints, version);
@@ -174,16 +172,16 @@ private:
 
     ar & _camera;
 
-    ar & boost::serialization::make_array(_imu_pose.data(), _imu_pose.size());
+    ar& boost::serialization::make_array(_imu_pose.data(), _imu_pose.size());
     ar & _init_v;
-    ar & boost::serialization::make_array(_velocity.data(), _velocity.size());
+    ar& boost::serialization::make_array(_velocity.data(), _velocity.size());
     ar & _preinteration;
 
     ar & _sentence_ids_of_word;
     ar & _sentences;
   }
 
-private:
+ private:
   int _frame_id;
   double _timestamp;
   bool _pose_fixed;
@@ -217,7 +215,7 @@ private:
 
   // for imu
   Eigen::Matrix4d _imu_pose;
-  bool _init_v;   
+  bool _init_v;
   Eigen::Vector3d _velocity;
   PreinterationPtr _preinteration;
   std::shared_ptr<Frame> _previous_frame;

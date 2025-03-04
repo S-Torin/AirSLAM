@@ -20,14 +20,14 @@
 #include "g2o_optimization/types.h"
 #include "bow/database.h"
 
-struct LoopGroupCandidate{
-  LoopGroupCandidate(): group_score(0) {}
+struct LoopGroupCandidate {
+  LoopGroupCandidate() : group_score(0) {}
 
   std::set<FramePtr> group_frames;
   double group_score;
 };
 
-struct LoopFramePair{
+struct LoopFramePair {
   LoopFramePair() {}
 
   FramePtr query_frame;
@@ -36,9 +36,8 @@ struct LoopFramePair{
   Eigen::Vector3d tlq;
 };
 
-
-class MapRefiner{
-public:
+class MapRefiner {
+ public:
   MapRefiner();
   MapRefiner(MapRefinementConfigs& configs, ros::NodeHandle nh);
 
@@ -51,8 +50,8 @@ public:
 
   int LoopDetection();
   void LoopDetection(FramePtr frame, DBoW2::WordIdToFeatures& word_features, DBoW2::BowVector& bow_vector);
-  void RelativatePoseEstimation(FramePtr frame, DBoW2::WordIdToFeatures& word_features, 
-      FramePtr loop_frame, std::vector<cv::DMatch>& loop_matches, std::map<FramePtr, LoopGroupCandidate>& group_candidates);
+  void RelativatePoseEstimation(FramePtr frame, DBoW2::WordIdToFeatures& word_features,
+                                FramePtr loop_frame, std::vector<cv::DMatch>& loop_matches, std::map<FramePtr, LoopGroupCandidate>& group_candidates);
 
   void PoseGraphRefinement();
 
@@ -76,14 +75,13 @@ public:
   void StopVisualization();
   void Wait(int breakpoint);
 
-private:
+ private:
   // tmp
   double odometry_length;
   std::vector<LoopFramePair> loop_frame_pairs;
   std::map<MappointPtr, std::set<MappointPtr>> merged_mappoints;
 
-
-private:
+ private:
   // class
   MapRefinementConfigs _configs;
   PointMatcherPtr _point_matcher;

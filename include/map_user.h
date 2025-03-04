@@ -20,15 +20,15 @@
 #include "g2o_optimization/types.h"
 #include "bow/database.h"
 
-struct RelocalizationGroupCandidate{
-  RelocalizationGroupCandidate(): group_score(0) {}
+struct RelocalizationGroupCandidate {
+  RelocalizationGroupCandidate() : group_score(0) {}
 
   std::set<FramePtr> group_frames;
   double group_score;
 };
 
-class MapUser{
-public:
+class MapUser {
+ public:
   MapUser();
   MapUser(RelocalizationConfigs& configs, ros::NodeHandle nh);
 
@@ -43,10 +43,10 @@ public:
   void PubMap();
   void StopVisualization();
 
-public:
+ public:
   int new_frame_id;
 
-private:
+ private:
   // class
   RelocalizationConfigs _configs;
   FeatureDetectorPtr _feature_detector;

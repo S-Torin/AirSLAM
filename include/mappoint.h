@@ -15,8 +15,8 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/map.hpp>
 
-class Mappoint{
-public:
+class Mappoint {
+ public:
   enum Type {
     UnTriangulated = 0,
     Good = 1,
@@ -39,7 +39,7 @@ public:
   void SetPosition(const Eigen::Vector3d& p);
   Eigen::Vector3d GetPosition();
   void SetDescriptor(const Eigen::Matrix<float, 256, 1>& descriptor);
-  Eigen::Matrix<float, 256, 1>& GetDescriptor(); 
+  Eigen::Matrix<float, 256, 1>& GetDescriptor();
 
   void AddObverser(const int& frame_id, const int& keypoint_index);
   void RemoveObverser(const int& frame_id);
@@ -47,28 +47,28 @@ public:
   std::map<int, int>& GetAllObversers();
   int GetKeypointIdx(int frame_id);
 
-public:
+ public:
   int tracking_frame_id;
   int last_frame_seen;
   int local_map_optimization_frame_id;
 
-private:
+ private:
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version){
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
     ar & _id;
     ar & _type;
-    ar & boost::serialization::make_array(_position.data(), _position.size());
+    ar& boost::serialization::make_array(_position.data(), _position.size());
     ar & _obversers;
     // ar & boost::serialization::make_array(_descriptor.data(), _descriptor.size());
   }
 
-private:
+ private:
   int _id;
   Type _type;
   Eigen::Vector3d _position;
   Eigen::Matrix<float, 256, 1> _descriptor;
-  std::map<int, int> _obversers;  // frame_id - keypoint_index 
+  std::map<int, int> _obversers;  // frame_id - keypoint_index
 };
 
 typedef std::shared_ptr<Mappoint> MappointPtr;

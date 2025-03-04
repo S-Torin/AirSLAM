@@ -76,6 +76,7 @@ add_library(${PROJECT_NAME}_lib SHARED
   src/feature_detector.cc
   src/super_glue.cpp
   src/light_glue.cpp
+  src/yolo_segment.cc
   src/plnet.cpp
   src/utils.cc
   src/camera.cc

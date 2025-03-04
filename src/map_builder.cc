@@ -26,6 +26,7 @@ MapBuilder::MapBuilder(VisualOdometryConfigs& configs, ros::NodeHandle nh) : _sh
   _preinteration_keyframe.SetNoiseAndWalk(_camera->GyrNoise(), _camera->AccNoise(), _camera->GyrWalk(), _camera->AccWalk());
   _point_matcher = std::shared_ptr<PointMatcher>(new PointMatcher(configs.point_matcher_config));
   _feature_detector = std::shared_ptr<FeatureDetector>(new FeatureDetector(configs.plnet_config));
+  _yolo_segmenter = std::shared_ptr<YoloSegmentor>(new YoloSegmentor(configs.yolo_segmenter_config));
   _ros_publisher = std::shared_ptr<RosPublisher>(new RosPublisher(configs.ros_publisher_config, nh));
   _map = std::shared_ptr<Map>(new Map(_configs.backend_optimization_config, _camera, _ros_publisher));
 

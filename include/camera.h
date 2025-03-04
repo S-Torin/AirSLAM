@@ -18,16 +18,16 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/map.hpp>
 
-class Camera{
-public:
+class Camera {
+ public:
   Camera();
   Camera(const std::string& camera_file);
-  Camera& operator=(const Camera& camera); // deep copy
-  
+  Camera& operator=(const Camera& camera);  // deep copy
+
   void ReadCameraNode(YAML::Node& cam_node, cv::Mat& K, cv::Mat& D, Eigen::Matrix4d& Tbc);
   void UndistortImage(cv::Mat& image_left, cv::Mat& image_left_rect);
-  void UndistortImage(
-      cv::Mat& image_left, cv::Mat& image_right, cv::Mat& image_left_rect, cv::Mat& image_right_rect);
+  void UndistortImage(cv::Mat& image_left, cv::Mat& image_right,
+                      cv::Mat& image_left_rect, cv::Mat& image_right_rect);
   double ImageHeight();
   double ImageWidth();
   bool UseIMU();
@@ -53,8 +53,9 @@ public:
   bool BackProjectMono(const Eigen::Vector2d& keypoint, Eigen::Vector3d& output);
   bool BackProjectStereo(const Eigen::Vector3d& keypoint, Eigen::Vector3d& output);
 
-  template<typename T> bool Project(Eigen::Matrix<T, 2, 1>& point2d, Eigen::Matrix<T, 3, 1>& point3d) const{
-    if(point3d(2) <= static_cast<T>(0)) return false;
+  template <typename T>
+  bool Project(Eigen::Matrix<T, 2, 1>& point2d, Eigen::Matrix<T, 3, 1>& point3d) const {
+    if (point3d(2) <= static_cast<T>(0)) return false;
 
     T z_inv = static_cast<T>(1.0) / point3d(2);
 
@@ -70,8 +71,9 @@ public:
     return x_ok && y_ok;
   }
 
-  template<typename T> bool StereoProject(Eigen::Matrix<T, 3, 1>& point2d, Eigen::Matrix<T, 3, 1>& point3d) const{
-    if(point3d(2) <= static_cast<T>(0)) return false;
+  template <typename T>
+  bool StereoProject(Eigen::Matrix<T, 3, 1>& point2d, Eigen::Matrix<T, 3, 1>& point3d) const {
+    if (point3d(2) <= static_cast<T>(0)) return false;
 
     T z_inv = static_cast<T>(1.0) / point3d(2);
 
@@ -89,13 +91,13 @@ public:
     return x_left_ok && y_left_ok && x_right_ok;
   }
 
-public:
+ public:
   static double IMU_G_VALUE;
 
-private:
+ private:
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version){
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
     ar & _image_height;
     ar & _image_width;
 
@@ -118,8 +120,8 @@ private:
     SerializeCVMat(ar, _mapr2, version);
 
     ar & _use_imu;
-    ar & boost::serialization::make_array(_Tbc.data(), _Tbc.size());
-    ar & boost::serialization::make_array(_Tcb.data(), _Tcb.size());
+    ar& boost::serialization::make_array(_Tbc.data(), _Tbc.size());
+    ar& boost::serialization::make_array(_Tcb.data(), _Tcb.size());
     ar & _gyr_noise;
     ar & _acc_noise;
     ar & _gyr_walk;
@@ -127,7 +129,7 @@ private:
     ar & _imu_frequency;
   }
 
-private:
+ private:
   int _image_height;
   int _image_width;
 

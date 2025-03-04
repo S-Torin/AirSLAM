@@ -20,9 +20,8 @@
 
 #include "utils.h"
 
-
-class Mapline{
-public:
+class Mapline {
+ public:
   enum Type {
     UnTriangulated = 0,
     Good = 1,
@@ -40,7 +39,7 @@ public:
   void SetGood();
   bool IsValid();
 
-  void SetEndpoints(Vector6d& p, bool compute_line3d=true);
+  void SetEndpoints(Vector6d& p, bool compute_line3d = true);
   Vector6d& GetEndpoints();
   void SetEndpointsValidStatus(bool status);
   bool EndpointsValid();
@@ -61,31 +60,31 @@ public:
   int GetObverserEndpointStatus(int frame_id);
   const std::map<int, int>& GetAllObverserEndpointStatus();
 
-public:
+ public:
   int local_map_optimization_frame_id;
 
-private:
+ private:
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version){
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
     ar & _id;
     ar & _type;
     ar & _to_update_endpoints;
     ar & _endpoints_valid;
-    ar & boost::serialization::make_array(_endpoints.data(), _endpoints.size());
+    ar& boost::serialization::make_array(_endpoints.data(), _endpoints.size());
     SerializeLine3D(ar, _line_3d, version);
     ar & _obversers;
     ar & _included_endpoints;
   }
 
-private:
+ private:
   int _id;
   Type _type;
   bool _to_update_endpoints;
   bool _endpoints_valid;
   Vector6d _endpoints;
   Line3DPtr _line_3d;
-  std::map<int, int> _obversers;  // frame_id - line_index 
+  std::map<int, int> _obversers;  // frame_id - line_index
   std::map<int, int> _included_endpoints;
 };
 

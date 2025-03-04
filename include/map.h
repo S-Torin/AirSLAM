@@ -21,8 +21,8 @@
 
 class MapRefiner;
 
-class Map{
-public:
+class Map {
+ public:
   Map();
   Map(OptimizationConfig& backend_optimization_config, CameraPtr camera, RosPublisherPtr ros_publisher);
   void InsertKeyframe(FramePtr frame);
@@ -50,8 +50,8 @@ public:
   int UpdateFrameTrackIds(int track_id);
   int UpdateFrameLineTrackIds(int line_track_id);
 
-  void SearchByProjection(FramePtr frame, std::vector<MappointPtr>& mappoints, 
-      int thr, std::vector<std::pair<int, MappointPtr>>& good_projections);
+  void SearchByProjection(FramePtr frame, std::vector<MappointPtr>& mappoints,
+                          int thr, std::vector<std::pair<int, MappointPtr>>& good_projections);
   void SaveKeyframeTrajectory(std::string save_root);
 
   bool InitializeIMU(FramePtr frame);
@@ -64,7 +64,6 @@ public:
 
   void SetRosPublisher(RosPublisherPtr ros_publisher);
   void Publish(double time, bool clear_old_message = false);
-
 
   // for offline optimization
   std::map<int, MappointPtr>& GetAllMappoints();
@@ -84,7 +83,7 @@ public:
   // debug
   void CheckMap();
 
-public:
+ public:
   // tmp parameters
   std::vector<std::pair<FramePtr, int>> to_update_track_id;
   std::vector<std::pair<FramePtr, int>> to_update_line_track_id;
@@ -94,22 +93,21 @@ public:
 
   double imu_init_time;
   FramePtr imu_init_frame;
-  int imu_init_stage;  
+  int imu_init_stage;
 
-
-private:
+ private:
   friend class MapRefiner;
   friend class MapUser;
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version){
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
     ar & _camera;
     ar & _mappoints;
     ar & _maplines;
     ar & _keyframes;
     // ar & _keyframe_ids;
     ar & _imu_init;
-    ar & boost::serialization::make_array(_Rwg.data(), _Rwg.size());
+    ar& boost::serialization::make_array(_Rwg.data(), _Rwg.size());
 
     ar & _covisibile_frames;
     ar & _database;
@@ -117,7 +115,7 @@ private:
     ar & _junction_voc;
   }
 
-private:
+ private:
   OptimizationConfig _backend_optimization_config;
   CameraPtr _camera;
   std::map<int, MappointPtr> _mappoints;
@@ -140,4 +138,4 @@ private:
 
 typedef std::shared_ptr<Map> MapPtr;
 
-#endif // MAP_H_
+#endif  // MAP_H_

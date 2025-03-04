@@ -18,60 +18,58 @@
 using tensorrt_buffer::TensorRTUniquePtr;
 
 class SuperGlue {
-public:
-    SuperGlue() {};
-    
-    explicit SuperGlue(const PointMatcherConfig &superglue_config);
+ public:
+  SuperGlue() {};
 
-    bool build();
+  explicit SuperGlue(const PointMatcherConfig& superglue_config);
 
-    bool infer(const Eigen::Matrix<float, 259, Eigen::Dynamic> &features0,
-               const Eigen::Matrix<float, 259, Eigen::Dynamic> &features1,
-               Eigen::VectorXi &indices0,
-               Eigen::VectorXi &indices1,
-               Eigen::VectorXd &mscores0,
-               Eigen::VectorXd &mscores1);
+  bool build();
 
-    void save_engine();
+  bool infer(const Eigen::Matrix<float, 259, Eigen::Dynamic>& features0,
+             const Eigen::Matrix<float, 259, Eigen::Dynamic>& features1,
+             Eigen::VectorXi& indices0,
+             Eigen::VectorXi& indices1,
+             Eigen::VectorXd& mscores0,
+             Eigen::VectorXd& mscores1);
 
-    bool deserialize_engine();
+  void save_engine();
 
-private:
-    PointMatcherConfig superglue_config_;
-    std::vector<int> indices0_;
-    std::vector<int> indices1_;
-    std::vector<float> mscores0_;
-    std::vector<float> mscores1_;
+  bool deserialize_engine();
 
-    nvinfer1::Dims keypoints_0_dims_{};
-    nvinfer1::Dims scores_0_dims_{};
-    nvinfer1::Dims descriptors_0_dims_{};
-    nvinfer1::Dims keypoints_1_dims_{};
-    nvinfer1::Dims scores_1_dims_{};
-    nvinfer1::Dims descriptors_1_dims_{};
-    nvinfer1::Dims output_scores_dims_{};
+ private:
+  PointMatcherConfig superglue_config_;
+  std::vector<int> indices0_;
+  std::vector<int> indices1_;
+  std::vector<float> mscores0_;
+  std::vector<float> mscores1_;
 
-    std::shared_ptr<nvinfer1::ICudaEngine> engine_;
-    std::shared_ptr<nvinfer1::IExecutionContext> context_;
+  nvinfer1::Dims keypoints_0_dims_{};
+  nvinfer1::Dims scores_0_dims_{};
+  nvinfer1::Dims descriptors_0_dims_{};
+  nvinfer1::Dims keypoints_1_dims_{};
+  nvinfer1::Dims scores_1_dims_{};
+  nvinfer1::Dims descriptors_1_dims_{};
+  nvinfer1::Dims output_scores_dims_{};
 
-    bool construct_network(TensorRTUniquePtr<nvinfer1::IBuilder> &builder,
-                           TensorRTUniquePtr<nvinfer1::INetworkDefinition> &network,
-                           TensorRTUniquePtr<nvinfer1::IBuilderConfig> &config,
-                           TensorRTUniquePtr<nvonnxparser::IParser> &parser) const;
+  std::shared_ptr<nvinfer1::ICudaEngine> engine_;
+  std::shared_ptr<nvinfer1::IExecutionContext> context_;
 
-    bool process_input(const tensorrt_buffer::BufferManager &buffers,
-                       const Eigen::Matrix<float, 259, Eigen::Dynamic> &features0,
-                       const Eigen::Matrix<float, 259, Eigen::Dynamic> &features1);
+  bool construct_network(TensorRTUniquePtr<nvinfer1::IBuilder>& builder,
+                         TensorRTUniquePtr<nvinfer1::INetworkDefinition>& network,
+                         TensorRTUniquePtr<nvinfer1::IBuilderConfig>& config,
+                         TensorRTUniquePtr<nvonnxparser::IParser>& parser) const;
 
-    bool process_output(const tensorrt_buffer::BufferManager &buffers,
-                        Eigen::VectorXi &indices0,
-                        Eigen::VectorXi &indices1,
-                        Eigen::VectorXd &mscores0,
-                        Eigen::VectorXd &mscores1);
+  bool process_input(const tensorrt_buffer::BufferManager& buffers,
+                     const Eigen::Matrix<float, 259, Eigen::Dynamic>& features0,
+                     const Eigen::Matrix<float, 259, Eigen::Dynamic>& features1);
 
-
+  bool process_output(const tensorrt_buffer::BufferManager& buffers,
+                      Eigen::VectorXi& indices0,
+                      Eigen::VectorXi& indices1,
+                      Eigen::VectorXd& mscores0,
+                      Eigen::VectorXd& mscores1);
 };
 
 typedef std::shared_ptr<SuperGlue> SuperGluePtr;
 
-#endif //SUPER_GLUE_H_
+#endif  // SUPER_GLUE_H_

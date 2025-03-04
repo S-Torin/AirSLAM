@@ -1,6 +1,6 @@
 <launch>
   <arg name="config_path" default = "$(find air_slam)/configs/visual_odometry/vo_euroc_dark.yaml" />
-  <arg name="dataroot" default = "/media/data/datasets/euroc/dark_euroc/sequences/09" />
+  <arg name="dataroot" default = "YOUR_DIR/MH_01_easy" />
   <arg name="camera_config_path" default = "$(find air_slam)/configs/camera/dark_euroc.yaml" />
   <arg name="model_dir" default = "$(find air_slam)/output" />
   <arg name="saving_dir" default = "$(find air_slam)/debug" />
@@ -18,4 +18,4 @@
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find air_slam)/rviz/vo.rviz" output="screen" />
   </group>
 
-</launch>		
+</launch>
