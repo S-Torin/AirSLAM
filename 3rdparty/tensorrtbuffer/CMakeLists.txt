@@ -12,11 +12,9 @@ include_directories("${CUDA_INCLUDE_DIRS}")
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
+    ${TENSORRT_INCLUDE_DIRS}
 )
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 add_library(tensorrtbuffer SHARED src/logger.cpp src/sample_options.cpp src/sample_utils.cpp)
-
-
-

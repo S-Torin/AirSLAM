@@ -13,7 +13,7 @@
 using namespace tensorrt_log;
 using namespace tensorrt_buffer;
 
-SuperPointLightGlue::SuperPointLightGlue(const PointMatcherConfig &lightglue_config) : lightglue_config_(lightglue_config), engine_(nullptr) {
+SuperPointLightGlue::SuperPointLightGlue(const PointMatcherConfig& lightglue_config) : lightglue_config_(lightglue_config), engine_(nullptr) {
   setReportableSeverity(Logger::Severity::kINTERNAL_ERROR);
 }
 
@@ -105,8 +105,8 @@ bool SuperPointLightGlue::build() {
   return true;
 }
 
-bool SuperPointLightGlue::construct_network(TensorRTUniquePtr<nvinfer1::IBuilder> &builder, TensorRTUniquePtr<nvinfer1::INetworkDefinition> &network,
-                                            TensorRTUniquePtr<nvinfer1::IBuilderConfig> &config, TensorRTUniquePtr<nvonnxparser::IParser> &parser) const {
+bool SuperPointLightGlue::construct_network(TensorRTUniquePtr<nvinfer1::IBuilder>& builder, TensorRTUniquePtr<nvinfer1::INetworkDefinition>& network,
+                                            TensorRTUniquePtr<nvinfer1::IBuilderConfig>& config, TensorRTUniquePtr<nvonnxparser::IParser>& parser) const {
   auto parsed = parser->parseFromFile(lightglue_config_.onnx_file.c_str(), static_cast<int>(gLogger.getReportableSeverity()));
   if (!parsed) {
     return false;
@@ -117,8 +117,8 @@ bool SuperPointLightGlue::construct_network(TensorRTUniquePtr<nvinfer1::IBuilder
   return true;
 }
 
-bool SuperPointLightGlue::infer(const Eigen::Matrix<float, 258, Eigen::Dynamic> &features0, const Eigen::Matrix<float, 258, Eigen::Dynamic> &features1,
-                                Eigen::Matrix<int, Eigen::Dynamic, 2> &matches_index, Eigen::Matrix<float, Eigen::Dynamic, 1> &matches_score) {
+bool SuperPointLightGlue::infer(const Eigen::Matrix<float, 258, Eigen::Dynamic>& features0, const Eigen::Matrix<float, 258, Eigen::Dynamic>& features1,
+                                Eigen::Matrix<int, Eigen::Dynamic, 2>& matches_index, Eigen::Matrix<float, Eigen::Dynamic, 1>& matches_score) {
   if (!context_) {
     context_ = TensorRTUniquePtr<nvinfer1::IExecutionContext>(engine_->createExecutionContext());
     if (!context_) {
@@ -169,11 +169,11 @@ bool SuperPointLightGlue::infer(const Eigen::Matrix<float, 258, Eigen::Dynamic> 
   return true;
 }
 
-bool SuperPointLightGlue::process_input(const BufferManager &buffers, const Eigen::Matrix<float, 258, Eigen::Dynamic> &features0, const Eigen::Matrix<float, 258, Eigen::Dynamic> &features1) {
-  auto *keypoints_0_buffer = static_cast<float *>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[0]));
-  auto *keypoints_1_buffer = static_cast<float *>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[1]));
-  auto *descriptors_0_buffer = static_cast<float *>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[2]));
-  auto *descriptors_1_buffer = static_cast<float *>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[3]));
+bool SuperPointLightGlue::process_input(const BufferManager& buffers, const Eigen::Matrix<float, 258, Eigen::Dynamic>& features0, const Eigen::Matrix<float, 258, Eigen::Dynamic>& features1) {
+  auto* keypoints_0_buffer = static_cast<float*>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[0]));
+  auto* keypoints_1_buffer = static_cast<float*>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[1]));
+  auto* descriptors_0_buffer = static_cast<float*>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[2]));
+  auto* descriptors_1_buffer = static_cast<float*>(buffers.getHostBuffer(lightglue_config_.input_tensor_names[3]));
 
   for (int colk0 = 0; colk0 < features0.cols(); ++colk0) {
     for (int rowk0 = 0; rowk0 < 2; ++rowk0) {
@@ -181,8 +181,7 @@ bool SuperPointLightGlue::process_input(const BufferManager &buffers, const Eige
     }
   }
 
-//  *keypoints_0_buffer = features0.data()[0];
-
+  //  *keypoints_0_buffer = features0.data()[0];
 
   for (int colk1 = 0; colk1 < features1.cols(); ++colk1) {
     for (int rowk1 = 0; rowk1 < 2; ++rowk1) {
@@ -190,7 +189,7 @@ bool SuperPointLightGlue::process_input(const BufferManager &buffers, const Eige
     }
   }
 
-//  *keypoints_1_buffer = features1.data()[0];
+  //  *keypoints_1_buffer = features1.data()[0];
 
   for (int cold0 = 0; cold0 < features0.cols(); ++cold0) {
     for (int rowd0 = 2; rowd0 < features0.rows(); ++rowd0) {
@@ -198,7 +197,7 @@ bool SuperPointLightGlue::process_input(const BufferManager &buffers, const Eige
     }
   }
 
-//  *descriptors_0_buffer = features0.data()[features0.cols() * 2];
+  //  *descriptors_0_buffer = features0.data()[features0.cols() * 2];
 
   for (int cold1 = 0; cold1 < features1.cols(); ++cold1) {
     for (int rowd1 = 2; rowd1 < features1.rows(); ++rowd1) {
@@ -206,12 +205,12 @@ bool SuperPointLightGlue::process_input(const BufferManager &buffers, const Eige
     }
   }
 
-//  *descriptors_1_buffer = features1.data()[features1.cols() * 2];
+  //  *descriptors_1_buffer = features1.data()[features1.cols() * 2];
 
   return true;
 }
 
-void filter_matches(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &scores, Eigen::Matrix<int, Eigen::Dynamic, 2> &matches_index, Eigen::Matrix<float, Eigen::Dynamic, 1> &matches_score,
+void filter_matches(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& scores, Eigen::Matrix<int, Eigen::Dynamic, 2>& matches_index, Eigen::Matrix<float, Eigen::Dynamic, 1>& matches_score,
                     float threshold = 0.1) {
   std::vector<std::pair<int, float>> row_max;
   row_max.resize(scores.rows());
@@ -223,9 +222,9 @@ void filter_matches(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &
         max_value = scores(row, col);
       }
     }
-//            Eigen::MatrixXd::Index max_row, max_col;
-//            float max_score = scores.block(row, 0, 1, scores.cols()).maxCoeff(&max_row, &max_col);
-//            row_max[row] = std::make_pair(max_col, max_score);
+    //            Eigen::MatrixXd::Index max_row, max_col;
+    //            float max_score = scores.block(row, 0, 1, scores.cols()).maxCoeff(&max_row, &max_col);
+    //            row_max[row] = std::make_pair(max_col, max_score);
   }
 
   std::vector<std::pair<int, float>> col_max;
@@ -239,9 +238,9 @@ void filter_matches(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &
         max_value = scores(row, col);
       }
     }
-//            Eigen::MatrixXd::Index max_row, max_col;
-//            float max_score = scores.block(0, col, scores.rows(), 1).maxCoeff(&max_row, &max_col);
-//            row_max[col] = std::make_pair(max_row, max_score);
+    //            Eigen::MatrixXd::Index max_row, max_col;
+    //            float max_score = scores.block(0, col, scores.rows(), 1).maxCoeff(&max_row, &max_col);
+    //            row_max[col] = std::make_pair(max_row, max_score);
   }
   std::vector<int> matches_index0_vec;
   std::vector<int> matches_index1_vec;
@@ -265,8 +264,8 @@ void filter_matches(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &
   }
 }
 
-bool SuperPointLightGlue::process_output(const BufferManager &buffers, Eigen::Matrix<int, Eigen::Dynamic, 2> &matches_index, Eigen::Matrix<float, Eigen::Dynamic, 1> &matches_score) {
-  auto *output_scores = static_cast<float *>(buffers.getHostBuffer(lightglue_config_.output_tensor_names[0]));
+bool SuperPointLightGlue::process_output(const BufferManager& buffers, Eigen::Matrix<int, Eigen::Dynamic, 2>& matches_index, Eigen::Matrix<float, Eigen::Dynamic, 1>& matches_score) {
+  auto* output_scores = static_cast<float*>(buffers.getHostBuffer(lightglue_config_.output_tensor_names[0]));
   int scores_rows = keypoints_0_dims_.d[1];
   int scores_cols = keypoints_1_dims_.d[1];
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> scores_matrix;
@@ -283,11 +282,11 @@ bool SuperPointLightGlue::process_output(const BufferManager &buffers, Eigen::Ma
 void SuperPointLightGlue::save_engine() {
   if (lightglue_config_.engine_file.empty()) return;
   if (engine_ != nullptr) {
-    nvinfer1::IHostMemory *data = engine_->serialize();
+    nvinfer1::IHostMemory* data = engine_->serialize();
     std::ofstream file(lightglue_config_.engine_file, std::ios::binary);
     ;
     if (!file) return;
-    file.write(reinterpret_cast<const char *>(data->data()), data->size());
+    file.write(reinterpret_cast<const char*>(data->data()), data->size());
   }
 }
 
@@ -297,10 +296,10 @@ bool SuperPointLightGlue::deserialize_engine() {
     file.seekg(0, std::ifstream::end);
     size_t size = file.tellg();
     file.seekg(0, std::ifstream::beg);
-    char *model_stream = new char[size];
+    char* model_stream = new char[size];
     file.read(model_stream, size);
     file.close();
-    nvinfer1::IRuntime *runtime = nvinfer1::createInferRuntime(gLogger);
+    nvinfer1::IRuntime* runtime = nvinfer1::createInferRuntime(gLogger);
     if (runtime == nullptr) {
       delete[] model_stream;
       return false;

@@ -6,6 +6,12 @@ set(CMAKE_BUILD_TYPE "release")
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 add_definitions(-w)
 
+# set your own TensorRT Path
+set(TENSORRT_ROOT "~/TensorRT-8.6.1.6")
+set(TENSORRT_INCLUDE_DIRS ${TENSORRT_ROOT}/include CACHE PATH "TensorRT include directory")
+# set your own OpenCV Path
+set(OpenCV_DIR /usr/lib/x86_64-linux-gnu/cmake/opencv4/ CACHE PATH "OpenCV config path")
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/3rdparty/tensorrtbuffer)
 add_subdirectory(${PROJECT_SOURCE_DIR}/3rdparty/DBoW2)
 
@@ -32,6 +38,7 @@ find_package(Boost REQUIRED)
 find_package(G2O REQUIRED)
 find_package(Gflags REQUIRED)
 find_package(Glog REQUIRED)
+find_package(Ceres 2 REQUIRED)
 
 catkin_package(
  INCLUDE_DIRS include
@@ -49,8 +56,9 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${G2O_INCLUDE_DIR}
-  ${GFLAGS_INCLUDE_DIRS} 
+  ${GFLAGS_INCLUDE_DIRS}
   ${GLOG_INCLUDE_DIRS}
+  ${TENSORRT_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME}_lib SHARED
@@ -94,12 +102,13 @@ target_link_libraries(${PROJECT_NAME}_lib
   ${CUDA_LIBRARIES}
   ${Boost_LIBRARIES}
   ${G2O_LIBRARIES}
-  ${GFLAGS_LIBRARIES} 
+  ${GFLAGS_LIBRARIES}
   ${GLOG_LIBRARIES}
   yaml-cpp
   tensorrtbuffer
   DBoW2
   -lboost_serialization
+  Ceres::ceres
 )
 
 add_executable(visual_odometry demo/visual_odometry.cpp)
@@ -110,6 +119,3 @@ target_link_libraries(map_refinement ${PROJECT_NAME}_lib ${catkin_LIBRARIES})
 
 add_executable(relocalization demo/relocalization.cpp)
 target_link_libraries(relocalization ${PROJECT_NAME}_lib ${catkin_LIBRARIES})
-
-add_executable(test_feature demo/test_feature.cpp)
-target_link_libraries(test_feature ${PROJECT_NAME}_lib ${catkin_LIBRARIES})

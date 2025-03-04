@@ -2,32 +2,31 @@
 
 #include "timer.h"
 
-
-void startTimer(Timer *pTimer){
-	gettimeofday(&pTimer->start, NULL);
+void startTimer(Timer* pTimer) {
+  gettimeofday(&pTimer->start, NULL);
 }
-void stopTimer(Timer *pTimer){
-	gettimeofday(&pTimer->stop, NULL);
-}
-
-double getElapsedTime(Timer *pTimer){
-	return ((pTimer->stop.tv_sec - pTimer->start.tv_sec) * 1000.0 + (pTimer->stop.tv_usec - pTimer->start.tv_usec) / 1000.0);
+void stopTimer(Timer* pTimer) {
+  gettimeofday(&pTimer->stop, NULL);
 }
 
-void writeTimeToFile(double arrTime[], int nCount, int nFrameNo, char *filename){
-	FILE *pFile;
-	int i;
+double getElapsedTime(Timer* pTimer) {
+  return ((pTimer->stop.tv_sec - pTimer->start.tv_sec) * 1000.0 + (pTimer->stop.tv_usec - pTimer->start.tv_usec) / 1000.0);
+}
 
-	pFile = fopen(filename, "a+");
-	if(NULL == pFile)
-		return;
+void writeTimeToFile(double arrTime[], int nCount, int nFrameNo, char* filename) {
+  FILE* pFile;
+  int i;
 
-	fprintf(pFile, "FrameNo, %d", nFrameNo);
+  pFile = fopen(filename, "a+");
+  if (NULL == pFile)
+    return;
 
-	for (i = 0; i < nCount; i++){
-		fprintf(pFile, ",%f", arrTime[i]);
-	}
+  fprintf(pFile, "FrameNo, %d", nFrameNo);
 
-	fprintf(pFile, "\n");
-	fclose(pFile);
+  for (i = 0; i < nCount; i++) {
+    fprintf(pFile, ",%f", arrTime[i]);
+  }
+
+  fprintf(pFile, "\n");
+  fclose(pFile);
 }

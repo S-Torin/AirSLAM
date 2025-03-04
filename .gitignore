@@ -4,12 +4,13 @@ datasets
 build/*
 saving/*
 data/*
-# *.jpg
-# *.png
 *.engine
 .vscode/*
 model/*
 weights/*
 debug/*
+!debug/0
+output/*
+!output/*onnx
 *.so
 */__pycache__/*
